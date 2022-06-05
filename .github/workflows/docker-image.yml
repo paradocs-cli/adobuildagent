@@ -18,3 +18,11 @@ jobs:
       run: ls -la
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag adobuildagent:$(date +%s)
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.CONTAINER_REGISTRY_SECRET }}
+    - name: Log in to DigitalOcean Container Registry with short-lived credentials
+      run: doctl registry login --expiry-seconds 600
+    - name: Push image to DigitalOcean Container Registry
+      run: docker push registry.digitalocean.com/cr-gwit01/adobuildagent:$(date +%s)
